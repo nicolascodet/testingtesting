@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from 'axios'
 
-const N8N_GET_SUMMARIES_WEBHOOK = process.env.N8N_GET_SUMMARIES_WEBHOOK || 'YOUR_N8N_GET_SUMMARIES_WEBHOOK_URL_HERE'
+const N8N_GET_WEBHOOK_URL = process.env.N8N_GET_WEBHOOK_URL || 'YOUR_N8N_GET_WEBHOOK_URL_HERE'
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,12 +12,16 @@ export default async function handler(
   }
 
   try {
-    const response = await axios.get(N8N_GET_SUMMARIES_WEBHOOK)
+    const response = await axios.get(N8N_GET_WEBHOOK_URL)
     
-    const summaries = response.data.map((item: any) => ({
-      id: item.id || Date.now().toString(),
-      message: item.message || '',
+    // Handle both single object and array responses
+    const data = Array.isArray(response.data) ? response.data : [response.data]
+    
+    const summaries = data.map((item: any, index: number) => ({
+      id: item.id || `${Date.now()}-${index}`,
+      message: item.subject || item.message || '',
       summary: item.summary || '',
+      sender: item.sender || '',
       timestamp: item.timestamp || new Date().toISOString()
     }))
 

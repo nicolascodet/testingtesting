@@ -5,6 +5,7 @@ interface Summary {
   id: string
   message: string
   summary: string
+  sender?: string
   timestamp: string
 }
 
@@ -103,13 +104,18 @@ export default function Home() {
             <div className="space-y-4">
               {summaries.map((summary) => (
                 <div key={summary.id} className="border rounded-lg p-4">
-                  <div className="mb-2">
+                  <div className="mb-2 flex justify-between items-start">
                     <span className="text-sm text-gray-500">
                       {new Date(summary.timestamp).toLocaleString()}
                     </span>
+                    {summary.sender && (
+                      <span className="text-sm text-gray-600 font-medium">
+                        From: {summary.sender}
+                      </span>
+                    )}
                   </div>
                   <div className="mb-2">
-                    <h3 className="font-semibold text-gray-900">Original Message:</h3>
+                    <h3 className="font-semibold text-gray-900">Subject/Message:</h3>
                     <p className="text-gray-700">{summary.message}</p>
                   </div>
                   <div>
